@@ -1,0 +1,2 @@
+- curl 'https://ardata.cy.gov.tw/api/v1/search/elections?page=1&pageSize=500' > list.json
+- php crawl.php
