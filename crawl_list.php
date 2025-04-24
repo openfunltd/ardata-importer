@@ -36,8 +36,13 @@ if ($pages > 1) {
 
 //Store data into /lists/{$endpoint}.jsonl
 $f = fopen(__DIR__ . "/lists/{$type}.jsonl", 'w');
+$idx = 1;
 foreach ($data as $row) {
     $json_line = json_encode($row, JSON_UNESCAPED_UNICODE);
-    fwrite($f, $json_line . "\n");
+    if ($idx < count($data)) {
+        $json_line = $json_line . "\n";
+    }
+    fwrite($f, $json_line);
+    $idx++;
 }
 fclose($f);
