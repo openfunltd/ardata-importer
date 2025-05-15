@@ -106,14 +106,6 @@ abstract class Model
         return $success;
     }
 
-    public function toOriginalArray() {
-        $result = [];
-        foreach ($this->attributes as $key => $value) {
-            $result[$key] = $this->cast($key, $value);
-        }
-        return $result;
-    }
-
     protected function cast($key, $value)
     {
         return $value;

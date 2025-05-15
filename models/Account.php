@@ -23,8 +23,16 @@ class Account extends Model
         'downloadPdf',
         'downloadCsv',
         'downloadZip',
-        'updatedDate'
+        'updatedDate',
     ];
+
+    public function toOriginalArray()
+    {
+        $attributes = $this->attributes;
+        unset($attributes['updatedDate']);
+
+        return $attributes;
+    }
 
     public function update($data)
     {

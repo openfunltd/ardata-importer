@@ -63,14 +63,19 @@ function import_row_versioning($table, $data)
         $row = new $class($data);
         $row->save();
         error_log("{$table} data inserted: {$data['path']}");
-    } elseif (!isSameData($data, $existing_row->toOriginalArray())) {
+    } elseif (!isSameData($existing_row->toOriginalArray(), $data)) {
         $existing_row->update($data);
         error_log("{$table} data updated: {$data['path']}");
     }
 }
 
-function isSameData($data_a, $data_b) {
-    ksort($data_a);
-    ksort($data_b);
-    return $data_a === $data_b;
+function isSameData($old_data, $new_data)
+{
+    foreach ($old_data as $key => $old_value) {
+        if (!array_key_exists($key, $new_data)) {
+            $new_data[$key] = null;
+        }
+    }
+
+    return $old_data == $new_data;
 }
