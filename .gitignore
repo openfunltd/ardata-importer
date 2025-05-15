@@ -1,4 +1,3 @@
 config.inc.php
-/lists
-/files
+/jsonl
 test.php
