@@ -4,9 +4,11 @@ include(__DIR__ . '/DB.php');
 include(__DIR__ . '/Model.php');
 include(__DIR__ . '/models/Election.php');
 include(__DIR__ . '/models/Account.php');
+include(__DIR__ . '/models/Party.php');
 
 import('election');
 import('account');
+import('party');
 
 function import($table)
 {

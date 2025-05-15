@@ -62,3 +62,44 @@ CREATE TABLE IF NOT EXISTS account_history (
     downloadZip TEXT,
     versionedDate TEXT
 );
+
+-- Table party --
+CREATE TABLE IF NOT EXISTS party (
+    path TEXT PRIMARY KEY,
+    accountNumber TEXT,
+    accountType TEXT,
+    yearOrSerial INTEGER,
+    version INTEGER,
+    name TEXT,
+    politicalPartyCode, INTEGER,
+    type TEXT,
+    pdfFileName TEXT,
+    csvFileName TEXT,
+    zipFileName TEXT,
+    isBackend INTEGER,
+    downloadPdf TEXT,
+    downloadCsv TEXT,
+    downloadZip TEXT,
+    updatedDate TEXT
+);
+
+-- Table party_history --
+CREATE TABLE IF NOT EXISTS party_history (
+    id INTEGER PRIMARY KEY,
+    path TEXT,
+    accountNumber TEXT,
+    accountType TEXT,
+    yearOrSerial INTEGER,
+    version INTEGER,
+    name TEXT,
+    politicalPartyCode, INTEGER,
+    type TEXT,
+    pdfFileName TEXT,
+    csvFileName TEXT,
+    zipFileName TEXT,
+    isBackend INTEGER,
+    downloadPdf TEXT,
+    downloadCsv TEXT,
+    downloadZip TEXT,
+    versionedDate TEXT
+);
