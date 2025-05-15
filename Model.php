@@ -33,10 +33,17 @@ abstract class Model
         $stmt->execute(['id' => $id]);
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        foreach ($row as $key => $value) {
-            $row[$key] = $this->uncast($key, $value);
+
+        if ($row === false) {
+            return null;
         }
-        return $row ? new static($row) : null;
+
+        $instance = new static($row);
+        foreach ($instance->attributes as $key => $value) {
+            $instance->attributes[$key] = $instance->uncast($key, $value);
+        }
+
+        return $instance;
     }
 
     public function save()
