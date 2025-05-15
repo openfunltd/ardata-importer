@@ -33,6 +33,9 @@ abstract class Model
         $stmt->execute(['id' => $id]);
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        foreach ($row as $key => $value) {
+            $row[$key] = $this->uncast($key, $value);
+        }
         return $row ? new static($row) : null;
     }
 
@@ -105,6 +108,11 @@ abstract class Model
     }
 
     protected function cast($key, $value)
+    {
+        return $value;
+    }
+
+    protected function uncast($key, $value)
     {
         return $value;
     }

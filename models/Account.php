@@ -26,20 +26,6 @@ class Account extends Model
         'updatedDate'
     ];
 
-    protected function cast($key, $value)
-    {
-        if ($key == 'isBackend') {
-            return $value ? 1 : 0;
-        }
-        return $value;
-    }
-
-    public function save()
-    {
-        $this->updatedDate = date('Y-m-d');
-        return parent::save();
-    }
-
     public function update($data)
     {
         //write old data into table account_history
@@ -64,5 +50,31 @@ class Account extends Model
         //update data
         $data['updatedDate'] = date('Y-m-d');
         return parent::update($data);
+    }
+
+    public function save()
+    {
+        $this->updatedDate = date('Y-m-d');
+        return parent::save();
+    }
+
+    protected function cast($key, $value)
+    {
+        if ($key == 'isBackend') {
+            return $value ? 1 : 0;
+        }
+        return $value;
+    }
+
+    protected function uncast($key, $value)
+    {
+        if ($key == 'isBackend') {
+            if ($value == 1) {
+                return true;
+            } elseif ($value == 0) {
+                return false;
+            }
+        }
+        return $value;
     }
 }
