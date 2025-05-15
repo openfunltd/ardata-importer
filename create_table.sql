@@ -103,3 +103,72 @@ CREATE TABLE IF NOT EXISTS party_history (
     downloadZip TEXT,
     versionedDate TEXT
 );
+
+-- Table record --
+CREATE TABLE IF NOT EXISTS record (
+    id TEXT PRIMARY KEY,
+    electionPath TEXT, --relate to election.path
+    accountPath TEXT, --relate to account.path
+    partyPath TEXT, --relate to party.path
+    name TEXT,
+    electionName TEXT,
+    yearOrSerial INTEGER,
+    transactionDate TEXT,
+    typeCode TEXT,
+    type TEXT,
+    donor TEXT,
+    donorIdentifier TEXT,
+    receivedAmount INTEGER,
+    donationAmount INTEGER,
+    payType TEXT,
+    saveAccountDate TEXT,
+    returnOrPaytrs TEXT,
+    donationUse TEXT,
+    isMoney INTEGER,
+    donorAddress TEXT,
+    tel TEXT,
+    exposeRemark TEXT,
+    rpIntraName TEXT,
+    rpIntraTitle TEXT,
+    rpPartyName TEXT,
+    rpPartyTitle TEXT,
+    rpRelationStr TEXT,
+    diffVersionStr TEXT,
+    updateDatetimeB TEXT,
+    updatedDate TEXT
+);
+
+-- Table record_history --
+CREATE TABLE IF NOT EXISTS record_history (
+    history_id INTEGER PRIMARY KEY,
+    id TEXT,
+    electionPath TEXT, --relate to election.path
+    accountPath TEXT, --relate to account.path
+    partyPath TEXT, --relate to party.path
+    name TEXT,
+    electionName TEXT,
+    yearOrSerial INTEGER,
+    transactionDate TEXT,
+    typeCode TEXT,
+    type TEXT,
+    donor TEXT,
+    donorIdentifier TEXT,
+    receivedAmount INTEGER,
+    donationAmount INTEGER,
+    payType TEXT,
+    saveAccountDate TEXT,
+    returnOrPaytrs TEXT,
+    donationUse TEXT,
+    isMoney INTEGER,
+    donorAddress TEXT,
+    tel TEXT,
+    exposeRemark TEXT,
+    rpIntraName TEXT,
+    rpIntraTitle TEXT,
+    rpPartyName TEXT,
+    rpPartyTitle TEXT,
+    rpRelationStr TEXT,
+    diffVersionStr TEXT,
+    updateDatetimeB TEXT,
+    versionedDate TEXT
+);

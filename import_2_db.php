@@ -5,10 +5,12 @@ include(__DIR__ . '/Model.php');
 include(__DIR__ . '/models/Election.php');
 include(__DIR__ . '/models/Account.php');
 include(__DIR__ . '/models/Party.php');
+include(__DIR__ . '/models/Record.php');
 
 import('election');
 import('account');
 import('party');
+import('record');
 
 function import($table)
 {
@@ -23,6 +25,7 @@ function import($table)
         while (file_exists($filename)) {
             import_from_file($table, $filename);
             $file_idx++;
+            $filename = "jsonl/{$table}-{$file_idx}.jsonl";
         }
     }
 }
@@ -59,15 +62,20 @@ function import_row_no_versioning($table, $data)
 function import_row_versioning($table, $data)
 {
     $class = ucfirst($table);
-    $existing_row = $class::find($data['path']);
+    $pk = $class::getPrimaryKey();
+    $existing_row = $class::find($data[$pk]);
+
+    if ($table == 'record') {
+        var_dump("{$table} now on: " . $data[$pk]);
+    }
 
     if (is_null($existing_row)) {
         $row = new $class($data);
         $row->save();
-        error_log("{$table} data inserted: {$data['path']}");
+        error_log("{$table} data inserted: {$data[$pk]}");
     } elseif (!isSameData($existing_row->toOriginalArray(), $data)) {
         $existing_row->update($data);
-        error_log("{$table} data updated: {$data['path']}");
+        error_log("{$table} data updated: {$data[$pk]}");
     }
 }
 

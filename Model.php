@@ -27,6 +27,11 @@ abstract class Model
         }
     }
 
+    public static function getPrimaryKey()
+    {
+        return static::$primary_key;
+    }
+
     public static function find($id) {
         $db = DB::getInstance()->pdo;
         $stmt = $db->prepare("SELECT * FROM " . static::$table . " WHERE " . static::$primary_key . " = :id");
@@ -44,6 +49,42 @@ abstract class Model
         }
 
         return $instance;
+    }
+
+    public static function where($conditions)
+    {
+        $db = DB::getInstance()->pdo;
+        $where_parts = [];
+        $params = [];
+
+        foreach ($conditions as $key => $value) {
+            if (!in_array($key, static::$schema)) {
+                continue;
+            }
+            $where_parts[] = "{$key} = :{$key}";
+            $params[$key] = $value;
+        }
+
+        if (empty($where_parts)) {
+            throw new Exception("No valid conditions provided for where().");
+        }
+
+        $sql = "SELECT * FROM " . static::$table . " WHERE " . implode(' AND ', $where_parts);
+        $stmt = $db->prepare($sql);
+        $stmt->execute($params);
+
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $results = [];
+
+        foreach ($rows as $row) {
+            $instance = new static($row);
+            foreach ($instance->attributes as $key => $value) {
+                $instance->attributes[$key] = $instance->uncast($key, $value);
+            }
+            $results[] = $instance;
+        }
+
+        return $results;
     }
 
     public function save()
