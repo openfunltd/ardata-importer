@@ -7,8 +7,12 @@ if (file_exists(__DIR__ . '/config.inc.php')) {
 include(__DIR__ . '/DB.php');
 include(__DIR__ . '/Model.php');
 include(__DIR__ . '/models/Election.php');
+include(__DIR__ . '/models/Account.php');
+include(__DIR__ . '/models/Party.php');
 
 import('election', '2025-05-15');
+import('account', '2025-05-15');
+import('party', '2025-05-15');
 
 function import($table, $updated_date = null)
 {
