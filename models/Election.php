@@ -19,7 +19,14 @@ class Election extends Model
         'downloadPdf',
         'downloadCsv',
         'downloadZip',
+        'updatedDate',
     ];
+
+    public function save()
+    {
+        $this->updatedDate = date('Y-m-d');
+        return parent::save();
+    }
 
     protected function cast($key, $value)
     {

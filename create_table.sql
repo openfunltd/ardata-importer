@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS election (
     isBackend INTEGER,
     downloadPdf TEXT,
     downloadCsv TEXT,
-    downloadZip TEXT
+    downloadZip TEXT,
+    updatedDate TEXT
 );
 
 -- Table account --
