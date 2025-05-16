@@ -19,8 +19,7 @@ function import($table, $updated_date = null)
 
     //create index if not exists
     if (!Elastic::indexExists($table)) {
-        $mappings = $class::getElasticIndexMappings();
-        Elastic::createIndex($table, $mappings);
+        Elastic::createIndex($table, new stdClass());
     }
 
     $rows = $class::where(['updatedDate' => $updated_date]);
