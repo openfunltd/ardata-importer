@@ -81,11 +81,13 @@ abstract class Model
         return $instance;
     }
 
-    public static function where($conditions = [])
+    public static function where($conditions = [], $per_page = null, $page = null)
     {
         $db = DB::getInstance()->pdo;
         $where_parts = [];
         $params = [];
+
+        $sql = "SELECT * FROM " . static::$table;
 
         if (!empty($conditions)) {
             foreach ($conditions as $key => $value) {
@@ -100,9 +102,12 @@ abstract class Model
                 throw new Exception("No valid conditions provided for where().");
             }
 
-            $sql = "SELECT * FROM " . static::$table . " WHERE " . implode(' AND ', $where_parts);
-        } else {
-            $sql = "SELECT * FROM " . static::$table;
+            $sql .= " WHERE " . implode(' AND ', $where_parts);
+        }
+
+        if (isset($per_page) and isset($page)) {
+            $offset = ($page - 1) * $per_page;
+            $sql .= " LIMIT {$per_page} OFFSET {$offset}";
         }
 
         $stmt = $db->prepare($sql);
@@ -119,6 +124,35 @@ abstract class Model
         }
 
         return $results;
+    }
+
+    public static function count($conditions = [])
+    {
+        $db = DB::getInstance()->pdo;
+        $where_parts = [];
+        $params = [];
+
+        foreach ($conditions as $key => $value) {
+            if (!in_array($key, static::$schema)) {
+                continue;
+            }
+            $where_parts[] = "$key = :$key";
+            $params[$key] = $value;
+        }
+
+        $sql = "SELECT COUNT(*) AS total FROM " . static::$table;
+        if (!empty($where_parts)) {
+            $sql .= " WHERE " . implode(' AND ', $where_parts);
+        }
+
+        $stmt = $db->prepare($sql);
+        $stmt->execute($params);
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (count($result) > 0) {
+            return $result[0]['total'];
+        }
+        return 0;
     }
 
     public function save()
