@@ -98,6 +98,30 @@ class Elastic
         }
     }
 
+    public static function indexExists($name)
+    {
+        $prefix = getenv('ELASTIC_PREFIX');
+        $url = getenv('ELASTIC_URL') . "/{$prefix}{$name}";
+        $_user = getenv('ELASTIC_USER');
+        $_password = getenv('ELASTIC_PASSWORD');
+
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_NOBODY, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_USERPWD, $_user . ':' . $_password);
+
+        curl_exec($curl);
+        $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+
+        if ($http_code == 200) {
+            return true;
+        }
+        if ($http_code == 404) {
+            return false;
+        }
+        return null;
+    }
     public static function createIndex($name, $data)
     {
         $prefix = getenv('ELASTIC_PREFIX');

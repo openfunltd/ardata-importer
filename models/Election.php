@@ -47,4 +47,34 @@ class Election extends Model
         }
         return $value;
     }
+
+    protected static $elastic_index_mappings = [
+        'path' => 'keyword',
+        'accountType' => 'keyword',
+        'yearOrSerial' => 'integer',
+        'electionYear' => 'integer',
+        'electionName' => 'keyword',
+        'electionArea' => 'keyword',
+        'type' => 'keyword',
+        'pdfFileName' => 'keyword',
+        'csvFileName' => 'keyword',
+        'zipFileName' => 'keyword',
+        'isBackend' => 'boolean',
+        'downloadPdf' => 'keyword',
+        'downloadCsv' => 'keyword',
+        'downloadZip' => 'keyword',
+    ];
+
+    public static function getElasticIndexMappings()
+    {
+        $data = (object) [];
+        $properties = (object) [];
+        foreach (static::$elastic_index_mappings as $key => $type) {
+            $field = (object) ['type' => $type];
+            $properties->{$key} = $field;
+        }
+        $data->properties = $properties;
+
+        return $data;
+    }
 }

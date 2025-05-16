@@ -7,6 +7,7 @@ abstract class Model
     protected static $table = '';
     protected static $primary_key = 'id';
     protected static $schema = [];
+    protected static $elastic_mappings = [];
 
     public function __construct($attributes = [])
     {
@@ -32,6 +33,35 @@ abstract class Model
         return static::$primary_key;
     }
 
+    public function getPrimaryKeyValue() {
+        $pk = static::$primary_key;
+        return $this->attributes[$pk] ?? null;
+    }
+
+    public function toElasticData()
+    {
+        $data = $this->attributes;
+
+        //unset columns with empty value
+        $columns = array_keys($data);
+        foreach ($columns as $col) {
+            if (empty($data[$col]) and $data[$col] !== false) {
+                unset($data[$col]);
+            }
+        }
+        //unset versioning column
+        unset($data['updatedDate']);
+
+        //prepend domain into download url
+        foreach (['downloadPdf', 'downloadCsv', 'downloadZip'] as $key) {
+            if (!empty($data[$key])) {
+                $data[$key] = 'https://ardata.cy.gov.tw' . $data[$key];
+            }
+        }
+
+        return (object) $data;
+    }
+
     public static function find($id) {
         $db = DB::getInstance()->pdo;
         $stmt = $db->prepare("SELECT * FROM " . static::$table . " WHERE " . static::$primary_key . " = :id");
@@ -51,31 +81,35 @@ abstract class Model
         return $instance;
     }
 
-    public static function where($conditions)
+    public static function where($conditions = [])
     {
         $db = DB::getInstance()->pdo;
         $where_parts = [];
         $params = [];
 
-        foreach ($conditions as $key => $value) {
-            if (!in_array($key, static::$schema)) {
-                continue;
+        if (!empty($conditions)) {
+            foreach ($conditions as $key => $value) {
+                if (!in_array($key, static::$schema)) {
+                    continue;
+                }
+                $where_parts[] = "{$key} = :{$key}";
+                $params[$key] = $value;
             }
-            $where_parts[] = "{$key} = :{$key}";
-            $params[$key] = $value;
+
+            if (empty($where_parts)) {
+                throw new Exception("No valid conditions provided for where().");
+            }
+
+            $sql = "SELECT * FROM " . static::$table . " WHERE " . implode(' AND ', $where_parts);
+        } else {
+            $sql = "SELECT * FROM " . static::$table;
         }
 
-        if (empty($where_parts)) {
-            throw new Exception("No valid conditions provided for where().");
-        }
-
-        $sql = "SELECT * FROM " . static::$table . " WHERE " . implode(' AND ', $where_parts);
         $stmt = $db->prepare($sql);
         $stmt->execute($params);
-
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $results = [];
 
+        $results = [];
         foreach ($rows as $row) {
             $instance = new static($row);
             foreach ($instance->attributes as $key => $value) {
