@@ -10,6 +10,7 @@ include(__DIR__ . '/models/Record.php');
 import('election');
 import('account');
 import('party');
+//TODO record 的新舊資料比對現在有誤，要補上 election_id, account_id, party_id
 import('record');
 
 function import($table)
@@ -48,13 +49,15 @@ function import_from_file($table, $filename)
 function import_row_no_versioning($table, $data)
 {
     $class = ucfirst($table);
-    $existing_row = $class::find($data['path']);
+    $id = buildId($class, $data);
+    $data['id'] = $id;
+    $existing_row = $class::find($id);
 
     //insert data not in db yet
     if (is_null($existing_row)) {
         $row = new $class($data);
         $row->save();
-        error_log("{$table} data inserted: {$data['path']}");
+        error_log("{$table} data inserted: {$id}");
     }
 }
 
@@ -62,20 +65,60 @@ function import_row_no_versioning($table, $data)
 function import_row_versioning($table, $data)
 {
     $class = ucfirst($table);
-    $pk = $class::getPrimaryKey();
-    $existing_row = $class::find($data[$pk]);
-
-    if ($table == 'record') {
-        var_dump("{$table} now on: " . $data[$pk]);
-    }
+    $id = buildId($class, $data);
+    $data['id'] = $id;
+    $existing_row = $class::find($id);
 
     if (is_null($existing_row)) {
         $row = new $class($data);
         $row->save();
-        error_log("{$table} data inserted: {$data[$pk]}");
+        error_log("{$table} data inserted: {$id}");
     } elseif (!isSameData($existing_row->toOriginalArray(), $data)) {
         $existing_row->update($data);
-        error_log("{$table} data updated: {$data[$pk]}");
+        error_log("{$table} data updated: {$id}");
+    }
+}
+
+function buildId($class, $data) {
+    if ($class == 'Election') {
+        $election_year = $data['electionYear'];
+        $election_name = $data['electionName'];
+        $election_area = $data['electionArea'] ?? '';
+        $year_or_serial = $data['yearOrSerial'];
+
+        $id = (empty($election_area)) ?
+            "$election_year-$election_name-$year_or_serial" :
+            "$election_year-$election_name-$election_area-$year_or_serial";
+
+        return $id;
+    }
+
+    if ($class == 'Account') {
+        $election_year = $data['electionYear'];
+        $election_name = $data['electionName'];
+        $election_area = $data['electionArea'] ?? '';
+        $name = $data['name'];
+        $year_or_serial = $data['yearOrSerial'];
+
+        $id = (empty($election_area)) ?
+            "$election_year-$election_name-$name-$year_or_serial" :
+            "$election_year-$election_name-$election_area-$name-$year_or_serial";
+
+        return $id;
+    }
+
+    if ($class == 'Party') {
+        $political_party_code = $data['politicalPartyCode'];
+        $name = $data['name'];
+        $year_or_serial = $data['yearOrSerial'];
+        $id = "$political_party_code-$name-$year_or_serial";
+
+        return $id;
+    }
+
+    if ($class == 'Record') {
+        $pk = $class::getPrimaryKey();
+        return $data[$pk];
     }
 }
 
@@ -87,5 +130,12 @@ function isSameData($old_data, $new_data)
         }
     }
 
+    if ($old_data != $new_data) {
+        foreach ($old_data as $key => $old_value) {
+            if ($old_value != $new_data[$key]) {
+                var_dump($key, $old_value, $new_data[$key]);
+            }
+        }
+    }
     return $old_data == $new_data;
 }
