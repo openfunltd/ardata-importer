@@ -1,6 +1,7 @@
 -- Table election --
 CREATE TABLE IF NOT EXISTS election (
-    path TEXT PRIMARY KEY,
+    id TEXT PRIMARY KEY,
+    path TEXT,
     accountType TEXT,
     yearOrSerial INTEGER,
     electionYear INTEGER,
@@ -19,7 +20,8 @@ CREATE TABLE IF NOT EXISTS election (
 
 -- Table account --
 CREATE TABLE IF NOT EXISTS account (
-    path TEXT PRIMARY KEY,
+    id TEXT PRIMARY KEY,
+    path TEXT,
     accountNumber TEXT,
     accountType TEXT,
     yearOrSerial INTEGER,
@@ -42,7 +44,8 @@ CREATE TABLE IF NOT EXISTS account (
 
 -- Table account_history --
 CREATE TABLE IF NOT EXISTS account_history (
-    id INTEGER PRIMARY KEY,
+    history_id INTEGER PRIMARY KEY,
+    id INTEGER,
     path TEXT,
     accountNumber TEXT,
     accountType TEXT,
@@ -66,7 +69,8 @@ CREATE TABLE IF NOT EXISTS account_history (
 
 -- Table party --
 CREATE TABLE IF NOT EXISTS party (
-    path TEXT PRIMARY KEY,
+    id TEXT PRIMARY KEY,
+    path TEXT,
     accountNumber TEXT,
     accountType TEXT,
     yearOrSerial INTEGER,
@@ -86,7 +90,8 @@ CREATE TABLE IF NOT EXISTS party (
 
 -- Table party_history --
 CREATE TABLE IF NOT EXISTS party_history (
-    id INTEGER PRIMARY KEY,
+    history_id INTEGER PRIMARY KEY,
+    id INTEGER,
     path TEXT,
     accountNumber TEXT,
     accountType TEXT,
@@ -108,9 +113,9 @@ CREATE TABLE IF NOT EXISTS party_history (
 -- Table record --
 CREATE TABLE IF NOT EXISTS record (
     id TEXT PRIMARY KEY,
-    electionPath TEXT, --relate to election.path
-    accountPath TEXT, --relate to account.path
-    partyPath TEXT, --relate to party.path
+    election_id TEXT, --relate to election.id
+    account_id TEXT, --relate to account.id
+    party_id TEXT, --relate to party.id
     name TEXT,
     electionName TEXT,
     yearOrSerial INTEGER,
@@ -143,9 +148,9 @@ CREATE TABLE IF NOT EXISTS record (
 CREATE TABLE IF NOT EXISTS record_history (
     history_id INTEGER PRIMARY KEY,
     id TEXT,
-    electionPath TEXT, --relate to election.path
-    accountPath TEXT, --relate to account.path
-    partyPath TEXT, --relate to party.path
+    election_id TEXT, --relate to election.id
+    account_id TEXT, --relate to account.id
+    party_id TEXT, --relate to party.id
     name TEXT,
     electionName TEXT,
     yearOrSerial INTEGER,
