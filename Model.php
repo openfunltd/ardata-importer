@@ -59,6 +59,13 @@ abstract class Model
             }
         }
 
+        //format date from Y-m-d H:i:s to Y-m-d
+        foreach (['transactionDate', 'saveAccountDate', 'updateDatetimeB'] as $key) {
+            if (!empty($data[$key])) {
+                $data[$key] = substr($data[$key], 0, 10);
+            }
+        }
+
         return (object) $data;
     }
 

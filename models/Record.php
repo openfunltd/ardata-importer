@@ -6,9 +6,9 @@ class Record extends Model
     protected static $primary_key = 'id';
     protected static $schema = [
         'id',
-        'electionPath', //relate to Election.path
-        'accountPath', //relate to Account.path
-        'partyPath', //relate to Party.path
+        'election_id', //relate to Election.id
+        'account_id', //relate to Account.id
+        'party_id', //relate to Party.id
         'name',
         'electionName',
         'yearOrSerial',
@@ -106,7 +106,7 @@ class Record extends Model
 
         $db = DB::getInstance()->pdo;
         $stmt = $db->prepare($sql);
-        return $stmt->execute($old_data);
+        $stmt->execute($old_data);
 
         //update data
         $data['updatedDate'] = date('Y-m-d');
@@ -129,7 +129,7 @@ class Record extends Model
                 'yearOrSerial' => $year_or_serial,
             ]);
             if (!empty($elections)) {
-                $this->electionPath = $elections[0]->path;
+                $this->election_id = $elections[0]->id;
             }
             //account.path
             $accounts = Account::where([
@@ -138,7 +138,7 @@ class Record extends Model
                 'name' => $name,
             ]);
             if (!empty($accounts)) {
-                $this->accountPath = $accounts[0]->path;
+                $this->account_id = $accounts[0]->id;
             }
         } else {
             //party.path
@@ -147,7 +147,7 @@ class Record extends Model
                 'yearOrSerial' => $year_or_serial,
             ]);
             if (!empty($parties)) {
-                $this->partyPath = $parties[0]->path;
+                $this->party_id = $parties[0]->id;
             }
         }
 

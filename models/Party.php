@@ -3,8 +3,9 @@
 class Party extends Model
 {
     protected static $table = 'party';
-    protected static $primary_key = 'path';
+    protected static $primary_key = 'id';
     protected static $schema = [
+        'id',
         'path',
         'accountNumber',
         'accountType',
@@ -50,7 +51,7 @@ class Party extends Model
 
         $db = DB::getInstance()->pdo;
         $stmt = $db->prepare($sql);
-        return $stmt->execute($data);
+        $stmt->execute($old_data);
 
         //update data
         $data['updatedDate'] = date('Y-m-d');
@@ -59,6 +60,12 @@ class Party extends Model
 
     public function save()
     {
+        $political_party_code = $this->politicalPartyCode;
+        $name = $this->name;
+        $year_or_serial = $this->yearOrSerial;
+        $id = "$political_party_code-$name-$year_or_serial";
+
+        $this->id = $id;
         $this->updatedDate = date('Y-m-d');
         return parent::save();
     }

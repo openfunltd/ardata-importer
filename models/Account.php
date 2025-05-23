@@ -3,8 +3,9 @@
 class Account extends Model
 {
     protected static $table = 'account';
-    protected static $primary_key = 'path';
+    protected static $primary_key = 'id';
     protected static $schema = [
+        'id',
         'path',
         'accountNumber',
         'accountType',
@@ -53,7 +54,7 @@ class Account extends Model
 
         $db = DB::getInstance()->pdo;
         $stmt = $db->prepare($sql);
-        return $stmt->execute($data);
+        $stmt->execute($old_data);
 
         //update data
         $data['updatedDate'] = date('Y-m-d');
@@ -62,6 +63,17 @@ class Account extends Model
 
     public function save()
     {
+        $election_year = $this->electionYear;
+        $election_name = $this->electionName;
+        $election_area = $this->electionArea;
+        $name = $this->name;
+        $year_or_serial = $this->yearOrSerial;
+
+        $id = (empty($election_area)) ?
+            "$election_year-$election_name-$name-$year_or_serial" :
+            "$election_year-$election_name-$election_area-$name-$year_or_serial";
+
+        $this->id = $id;
         $this->updatedDate = date('Y-m-d');
         return parent::save();
     }
